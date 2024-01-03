@@ -35,7 +35,7 @@ WORKDIR /gnuradio_lora/SoapyHackRF/build
 RUN cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 RUN make install
 
-COPY ./RX_TX.py /gnuradio_lora
-COPY ./RX_TX_ep_block_0.py /gnuradio_lora
+COPY ./flowgraphs/RX_TX.py /gnuradio_lora
+COPY ./flowgraphs/RX_TX_ep_block_0.py /gnuradio_lora
 WORKDIR /gnuradio_lora
 CMD /opt/conda/envs/gr310/bin/python3.10 RX_TX.py

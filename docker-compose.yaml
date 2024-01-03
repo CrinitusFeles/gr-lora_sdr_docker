@@ -7,4 +7,4 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: bash -c "/root/miniconda3/envs/gr310/bin/SoapySDRUtil --make=\"driver=hackrf\" && /root/miniconda3/envs/gr310/bin/python3.10 RX_TX.py"
+    command: bash -c "/opt/conda/envs/gr310/bin/python3.10 RX_TX.py"
