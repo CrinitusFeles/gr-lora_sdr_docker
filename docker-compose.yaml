@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  ground_station:
+    image: gnuradio_lora
+    container_name: gnuradio_lora
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: bash -c "/root/miniconda3/envs/gr310/bin/SoapySDRUtil --make=\"driver=hackrf\" && /root/miniconda3/envs/gr310/bin/python3.10 RX_TX.py"
