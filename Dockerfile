@@ -32,6 +32,8 @@ WORKDIR /gnuradio_lora/SoapyHackRF/build
 RUN cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 RUN make install
 
+RUN pip install python-dotenv
+
 COPY ./flowgraphs /gnuradio_lora
 WORKDIR /gnuradio_lora
 CMD python RX_TX.py

@@ -105,6 +105,18 @@ blocks:
     coordinate: [1216, 36.0]
     rotation: 0
     state: enabled
+- name: ldro
+  id: variable
+  parameters:
+    comment: ''
+    value: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [840, 228.0]
+    rotation: 0
+    state: enabled
 - name: output_index
   id: variable
   parameters:
@@ -696,7 +708,7 @@ blocks:
     cr: cr
     has_crc: has_crc
     impl_head: 'False'
-    ldro: 'False'
+    ldro: ldro
     maxoutbuf: '0'
     minoutbuf: '0'
     pay_len: pay_len
@@ -716,7 +728,7 @@ blocks:
     bw: '125000'
     comment: ''
     cr: cr
-    ldro: '0'
+    ldro: ldro
     maxoutbuf: '0'
     minoutbuf: '0'
     sf: sf
@@ -804,7 +816,7 @@ blocks:
     alias: ''
     amp: 'False'
     bandwidth: '0'
-    center_freq: '437000000'
+    center_freq: center_freq
     comment: ''
     dev_args: 0000000000000000081c69dc2f5e9e1b
     samp_rate: samp_rate
@@ -824,7 +836,7 @@ blocks:
     alias: ''
     amp: 'True'
     bandwidth: '0'
-    center_freq: '437000000'
+    center_freq: center_freq
     comment: ''
     dev_args: 0000000000000000081c69dc2f5e9e1b
     gain: '24'

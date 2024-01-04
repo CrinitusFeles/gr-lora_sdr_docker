@@ -8,7 +8,7 @@
 # Title: RX_TX
 # Author: CrinitusFeles
 # GNU Radio version: 3.10.3.0
-
+import os
 import time
 from gnuradio import blocks
 from gnuradio import gr
@@ -18,8 +18,10 @@ from gnuradio import soapy
 from gnuradio import zeromq
 import RX_TX_epy_block_0 as epy_block_0  # embedded python block
 import gnuradio.lora_sdr as lora_sdr
+from dotenv import load_dotenv
 
 
+load_dotenv()
 
 
 class RX_TX(gr.top_block):
@@ -30,36 +32,37 @@ class RX_TX(gr.top_block):
         ##################################################
         # Variables
         ##################################################
-        self.sync_word = sync_word = 18
-        self.soft_decoding = soft_decoding = True
-        self.sf = sf = 10
-        self.samp_rate = samp_rate = 2000000
+        self.sync_word = sync_word = int(os.environ['SYNC_WORD'])
+        self.soft_decoding = True
+        self.sf = sf = int(os.environ['SF'])
+        self.samp_rate = samp_rate = int(os.environ['SAMP_RATE'])
         self.pay_len = pay_len = 3
         self.output_index = output_index = 0
+        self.ldro = ldro = False
         self.input_index = input_index = 0
         self.impl_head = impl_head = False
         self.has_crc = has_crc = True
-        self.cr = cr = 1
-        self.center_freq = center_freq = 437000000
-        self.bw = bw = 125000
+        self.cr = cr = int(os.environ['CR'])
+        self.center_freq = center_freq = int(os.environ['FREQ'])
+        self.bw = bw = int(os.environ['BW'])
 
         ##################################################
         # Blocks
         ##################################################
-        self.zeromq_push_sink_0 = zeromq.push_sink(gr.sizeof_char, 1, 'tcp://0.0.0.0:5501', 100, True, (-1))
-        self.zeromq_pull_msg_source_0_0 = zeromq.pull_msg_source('tcp://192.168.0.105:5500', 100, False)
-        self.zeromq_pull_msg_source_0 = zeromq.pull_msg_source('tcp://192.168.0.105:5502', 100, False)
+        self.zeromq_push_sink_0 = zeromq.push_sink(gr.sizeof_char, 1, os.environ['ZMQ_RCV_MESSAGES_SERVER'], 100, True, (-1))
+        self.zeromq_pull_msg_source_0_0 = zeromq.pull_msg_source(os.environ['ZMQ_SEND_MESSAGES_CLIENT'], 100, False)
+        self.zeromq_pull_msg_source_0 = zeromq.pull_msg_source(os.environ['ZMQ_CONFIG_CLIENT'], 100, False)
         self.soapy_hackrf_source_0 = None
         dev = 'driver=hackrf'
         stream_args = ''
         tune_args = ['']
         settings = ['']
 
-        self.soapy_hackrf_source_0 = soapy.source(dev, "fc32", 1, '0000000000000000081c69dc2f5e9e1b',
+        self.soapy_hackrf_source_0 = soapy.source(dev, "fc32", 1, os.environ.get('HACKRF_SERIAL', ''),
                                   stream_args, tune_args, settings)
         self.soapy_hackrf_source_0.set_sample_rate(0, samp_rate)
         self.soapy_hackrf_source_0.set_bandwidth(0, 0)
-        self.soapy_hackrf_source_0.set_frequency(0, 437000000)
+        self.soapy_hackrf_source_0.set_frequency(0, int(os.environ['FREQ']))
         self.soapy_hackrf_source_0.set_gain(0, 'AMP', True)
         self.soapy_hackrf_source_0.set_gain(0, 'LNA', min(max(24, 0.0), 40.0))
         self.soapy_hackrf_source_0.set_gain(0, 'VGA', min(max(24, 0.0), 62.0))
@@ -69,17 +72,17 @@ class RX_TX(gr.top_block):
         tune_args = ['']
         settings = ['']
 
-        self.soapy_hackrf_sink_0 = soapy.sink(dev, "fc32", 1, '0000000000000000081c69dc2f5e9e1b',
+        self.soapy_hackrf_sink_0 = soapy.sink(dev, "fc32", 1, os.environ.get('HACKRF_SERIAL', ''),
                                   stream_args, tune_args, settings)
         self.soapy_hackrf_sink_0.set_sample_rate(0, samp_rate)
         self.soapy_hackrf_sink_0.set_bandwidth(0, 0)
-        self.soapy_hackrf_sink_0.set_frequency(0, 437000000)
+        self.soapy_hackrf_sink_0.set_frequency(0, int(os.environ['FREQ']))
         self.soapy_hackrf_sink_0.set_gain(0, 'AMP', False)
         self.soapy_hackrf_sink_0.set_gain(0, 'VGA', min(max(16, 0.0), 47.0))
         self.lora_sdr_whitening_0 = lora_sdr.whitening(True,True,',','pay_len')
         self.lora_sdr_modulate_0 = lora_sdr.modulate(sf, samp_rate, bw, [sync_word], (int(20*2**sf*int(samp_rate/bw))),8)
-        self.lora_sdr_interleaver_0 = lora_sdr.interleaver(cr, sf, 0, 125000)
-        self.lora_sdr_header_decoder_0 = lora_sdr.header_decoder(False, cr, pay_len, has_crc, False, True)
+        self.lora_sdr_interleaver_0 = lora_sdr.interleaver(cr, sf, ldro, bw)
+        self.lora_sdr_header_decoder_0 = lora_sdr.header_decoder(False, cr, pay_len, has_crc, ldro, True)
         self.lora_sdr_header_0 = lora_sdr.header(impl_head, has_crc, cr)
         self.lora_sdr_hamming_enc_0 = lora_sdr.hamming_enc(cr, sf)
         self.lora_sdr_hamming_dec_0 = lora_sdr.hamming_dec(True)
@@ -196,6 +199,12 @@ class RX_TX(gr.top_block):
         self.output_index = output_index
         self.blocks_selector_0.set_output_index(self.output_index)
 
+    def get_ldro(self):
+        return self.ldro
+
+    def set_ldro(self, ldro):
+        self.ldro = ldro
+
     def get_input_index(self):
         return self.input_index
 
@@ -230,6 +239,8 @@ class RX_TX(gr.top_block):
 
     def set_center_freq(self, center_freq):
         self.center_freq = center_freq
+        self.soapy_hackrf_sink_0.set_frequency(0, self.center_freq)
+        self.soapy_hackrf_source_0.set_frequency(0, self.center_freq)
 
     def get_bw(self):
         return self.bw

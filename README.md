@@ -48,7 +48,7 @@ usbipd attach -w -b 4-2
 ```
 After that you can test device inside container if you build the image without last string: `CMD python RX_TX.py` and run it in interactive mode:
 ```
-docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb gnuradio_lora
+docker run -it --env-file .env --privileged -v /dev/bus/usb:/dev/bus/usb gnuradio_lora
 ```
 
 In interactive mode call:
@@ -73,7 +73,7 @@ Found device 0
 After checking device recognition you can put back commented string in Dockerfile and rebuild it.
 Now you can use LoRa transceiver with HackRF in docker:
 ```
-docker run --privileged -v /dev/bus/usb:/dev/bus/usb gnuradio_lora
+docker run --env-file .env --privileged -v /dev/bus/usb:/dev/bus/usb gnuradio_lora
 ```
 
 or use docker compose:
