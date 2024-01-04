@@ -7,4 +7,5 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: bash -c "/opt/conda/envs/gr310/bin/python3.10 RX_TX.py"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb

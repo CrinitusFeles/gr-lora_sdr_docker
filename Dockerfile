@@ -9,12 +9,9 @@ RUN apt -y install build-essential \
 
 RUN git clone https://github.com/tapparelj/gr-lora_sdr.git
 RUN apt install -y hackrf libhackrf-dev pkg-config
-# RUN conda init bash && . ~/.bashrc
 RUN conda env create -f /gnuradio_lora/gr-lora_sdr/environment.yml
 RUN echo "conda activate gr310" >> ~/.bashrc
-# SHELL ["conda", "run", "-n", "gr310", "/bin/bash", "-c"]
 SHELL ["/bin/bash", "--login", "-c"]
-# RUN printenv
 RUN mkdir /gnuradio_lora/gr-lora_sdr/build
 WORKDIR /gnuradio_lora/gr-lora_sdr/build
 RUN cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
@@ -35,7 +32,6 @@ WORKDIR /gnuradio_lora/SoapyHackRF/build
 RUN cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 RUN make install
 
-COPY ./flowgraphs/RX_TX.py /gnuradio_lora
-COPY ./flowgraphs/RX_TX_ep_block_0.py /gnuradio_lora
+COPY ./flowgraphs /gnuradio_lora
 WORKDIR /gnuradio_lora
-CMD /opt/conda/envs/gr310/bin/python3.10 RX_TX.py
+CMD python RX_TX.py

@@ -9,6 +9,7 @@
 # Author: CrinitusFeles
 # GNU Radio version: 3.10.3.0
 
+import time
 from gnuradio import blocks
 from gnuradio import gr
 import sys
@@ -252,11 +253,12 @@ def main(top_block_cls=RX_TX, options=None):
     signal.signal(signal.SIGTERM, sig_handler)
 
     tb.start()
-
-    try:
-        input('Press Enter to quit: ')
-    except EOFError:
-        pass
+    while True:
+        time.sleep(1)
+    # try:  # when running in interactive mode
+    #     in_data =  input('Press Enter to quit: ')
+    # except EOFError as err:
+    #     time.sleep(0.1)
     tb.stop()
     tb.wait()
 
