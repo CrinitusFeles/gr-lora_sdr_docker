@@ -19,7 +19,7 @@ from gnuradio import zeromq
 import RX_TX_epy_block_0 as epy_block_0  # embedded python block
 import gnuradio.lora_sdr as lora_sdr
 from dotenv import load_dotenv
-
+from ast import literal_eval
 
 load_dotenv()
 
@@ -38,7 +38,7 @@ class RX_TX(gr.top_block):
         self.samp_rate = samp_rate = int(os.environ['SAMP_RATE'])
         self.pay_len = pay_len = 3
         self.output_index = output_index = 0
-        self.ldro = ldro = False
+        self.ldro = ldro = literal_eval(os.environ['LDRO'])
         self.input_index = input_index = 0
         self.impl_head = impl_head = False
         self.has_crc = has_crc = True
